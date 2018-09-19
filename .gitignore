@@ -1,0 +1,11 @@
+twitter_package/config.py
+state_data
+2017-2018-data
+Data\ Cleaning.ipynb
+*.csv
+*.pkl
+.ipynb_checkpoints
+*.h5
+*.json
+.DS_Store
+logs/

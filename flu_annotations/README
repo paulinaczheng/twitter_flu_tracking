@@ -1,0 +1,39 @@
+Influenza Tweet Annotations
+
+Copyright 2013 Alex Lamb, Michael Paul, Mark Dredze
+Contact: Michael Paul <mpaul@cs.jhu.edu>
+
+Please cite the following paper in any work that uses this material:
+
+@InProceedings{lamb-paul-dredze-naacl-2013,
+  author    = {Lamb, Alex and Paul, Michael J. and Dredze, Mark},
+  title     = {Separating Fact from Fear: Tracking Flu Infections on Twitter},
+  booktitle = {North American Chapter of the Association for Computational Linguistics: Human Language Technologies (NAACL-HLT 2013)},
+  month     = {June},
+  year      = {2013},
+  url       = {http://www.aclweb.org/anthology/N/N13/N13-1097.pdf}
+}
+
+This data set contains the labels assigned to tweets, as described in
+the paper above. These are tab-separated files, where the first column
+is the tweet ID and the second column is a binary label. The labels are:
+
+RelatedVsNotRelated:
+ 0: Not related to influenza
+ 1: Related to influenza
+
+AwarenessVsInfection:
+ 0: Influenza infection
+ 1: Influenza awareness
+
+SelfVsOthers:
+ 0: Others (the tweet describes someone else)
+ 1: Self (the tweet describes the author)
+
+As per the Twitter guidelines, we are only releasing the IDs of the tweets
+and not the content of the tweets. You can use these IDs to download the
+corresponding tweets using the Twitter API. See:
+https://dev.twitter.com/docs/api/1.1
+
+
+
