@@ -15,6 +15,5 @@ db = SQLAlchemy(server)
 
 app = dash.Dash(__name__, server=server, url_base_pathname = '/')
 
-# from twitter_package import routes
-from twitter_package.dashboard import *
-from twitter_package.config import *
+# from twitter_package.dashboard import *
+# from twitter_package.config import *

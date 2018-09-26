@@ -41,11 +41,11 @@ import plotly.figure_factory as ff
 #     return {'data': data, 'layout': layout}
 
 app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
-    html.H1('Twitter Geolocation', style={'textAlign': 'center', 'margin': '48px 0', 'fontFamily': 'Sans-Serif'}),
+    html.H1('Tracking Flu Outbreaks with Twitter', style={'textAlign': 'center', 'margin': '48px 0', 'fontFamily': 'Sans-Serif'}),
     dcc.Tabs(id="tabs", children=[
-        dcc.Tab(label='Map Overview', children=[
+        dcc.Tab(label='Framework Overview', children=[
             html.Div([
-                html.H1('Testing')
+                html.H1('Image of diagram here')
                 # dcc.Graph(id='map',figure=generate_map())
                         ])
                         ]),
