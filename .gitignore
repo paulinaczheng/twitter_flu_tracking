@@ -9,3 +9,5 @@ Data\ Cleaning.ipynb
 *.json
 .DS_Store
 logs/
+FluViewPhase2Data/
+google_trends/
