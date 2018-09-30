@@ -153,7 +153,7 @@ class StreamListener(tweepy.StreamListener):
             return False
 
 flu = ['flu', 'influenza', 'cough', 'fever', 'sore throat', 'headache',
-        'phlegm', 'runny nose', 'stuffy nose', 'sick', 'Robitussin',
+        'phlegm', 'runny nose', 'stuffy nose', 'Robitussin',
         'dayquil', 'nyquil', 'tamiflu', 'vomit', 'body ache', 'mucinex',
         'pneumonia', 'vomit', 'bodyache', 'medicine']
 

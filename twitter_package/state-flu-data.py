@@ -156,7 +156,7 @@ def hydrate_tweets(tweet_ids):
 
 def is_relevant(text):
     flu = ['flu', 'influenza', 'cough', 'fever', 'sore throat', 'headache',
-        'phlegm', 'runny nose', 'stuffy nose', 'sick', 'Robitussin',
+        'phlegm', 'runny nose', 'stuffy nose', 'Robitussin',
         'dayquil', 'nyquil', 'tamiflu', 'vomit', 'body ache', 'mucinex',
         'pneumonia', 'vomit', 'bodyache', 'medicine']
     if any(keyword in text for keyword in flu):
