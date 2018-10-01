@@ -17,6 +17,9 @@ def check_model(model_name):
     elif model_name=='svm':
         return svm
 
+def generate_feature_importance():
+    pass
+
 def generate_all_roc_curves():
     data = []
     classifiers = [nb, log, forest, gradboost, adaboost, svm]

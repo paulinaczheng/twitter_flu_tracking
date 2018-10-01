@@ -10,6 +10,7 @@ from dash.dependencies import Input, Output, State
 from sklearn.externals import joblib
 import pandas as pd
 from twitter_package.charts import *
+import base64
 
 # nb = joblib.load('nb.pkl')
 # log = joblib.load('log.pkl')
@@ -19,26 +20,25 @@ from twitter_package.charts import *
 # svm = joblib.load('svm.pkl')
 ## load training and test sets
 
+process_diagram = 'images/process_diagram.png' # replace with your own image
+encoded_process_image = base64.b64encode(open(process_diagram, 'rb').read())
+
 app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
     html.H1('Tracking Flu Outbreaks with Twitter', style={'textAlign': 'center', 'margin': '48px 0', 'fontFamily': 'Sans-Serif'}),
     dcc.Tabs(id="tabs", children=[
         dcc.Tab(label='Framework Overview', children=[
             html.Div([
-                html.H1('Image of process diagram here')
+                html.H1('Project Process Overview'),
+                dcc.Markdown('The project was defined by two phases: (1) training machine learning classification models to identify flu-related tweets and (2) conducting time-series analyses with identified tweets and CDC data.'),
+                html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_process_image.decode()))])
                         ])
                         ]),
-        dcc.Tab(label='Map Overview', children=[
-            html.Div([
-                html.H1('Generate map here')
-                # dcc.Graph(id='map',figure=generate_map())
-                        ])
-                        ]),
-        dcc.Tab(label='Vectorization Overview', children=[
-            html.Div([
-                html.H1('Vectorization metrics overview here')
-                        ])
-                        ]),
-        dcc.Tab(label='Feature Importance', children=[
+        # dcc.Tab(label='Vectorization Overview', children=[
+        #     html.Div([
+        #         html.H1('Vectorization metrics overview here')
+        #                 ])
+        #                 ]),
+        dcc.Tab(label='Natural Language Processing', children=[
             html.Div([
                 html.H1('Chi-square values and features here'),
                 html.H1('PCA plot here')
