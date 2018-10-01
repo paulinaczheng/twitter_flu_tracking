@@ -12,10 +12,13 @@ import pandas as pd
 from twitter_package.charts import *
 import base64
 import warnings
+from nltk.corpus import stopwords
+from nltk.tokenize import TweetTokenizer, word_tokenize
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", category=UserWarning)
-    warnings.filterwarnings("ignore", category=DeprecationWarning) 
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
     nb = joblib.load('models/nb.pkl')
     log = joblib.load('models/log.pkl')
     forest = joblib.load('models/forest.pkl')
@@ -23,11 +26,34 @@ with warnings.catch_warnings():
     adaboost = joblib.load('models/adaboost.pkl')
     svm = joblib.load('models/svm.pkl')
 
-# load training and test sets
-test_data = pd.read_csv('train_test_data/test_data.csv')
-train_data = pd.read_csv('train_test_data/train_data.csv')
-y_test = pd.read_csv('train_test_data/y_test.csv')
-y_train = pd.read_csv('train_test_data/y_train.csv')
+#load training and test sets
+test_data = pd.read_csv('train_test_data/test_data.csv', header=None)
+test_data = test_data[1]
+train_data = pd.read_csv('train_test_data/train_data.csv', header=None)
+train_data = train_data[1]
+y_test = pd.read_csv('train_test_data/y_test.csv', header=None)
+y_test = y_test[1]
+y_train = pd.read_csv('train_test_data/y_train.csv', header=None)
+y_train = y_train[1]
+
+# Load npz file containing image arrays
+# x_train_npz = np.load("train_test_data/x_train.npz")
+# x_train = x_train_npz['arr_0']
+# x_test_npz = np.load("train_test_data/x_test.npz")
+# x_test = x_test_npz['arr_0']
+# y_train_npz = np.load("train_test_data/y_train.npz")
+# y_train = y_train_npz['arr_0']
+# y_test_npz = np.load("train_test_data/y_test.npz")
+# y_test = y_test_npz['arr_0']
+
+#vectorize data, TF-IDF with bigrams
+def tokenize(tweet):
+    tknzr = TweetTokenizer(strip_handles=True, reduce_len=True, preserve_case=False)
+    return tknzr.tokenize(tweet)
+
+tfidfvec2 = TfidfVectorizer(stop_words='english', tokenizer=tokenize, ngram_range=(1,2), max_features=20000)
+x_train = tfidfvec2.fit_transform(train_data)
+x_test = tfidfvec2.transform(test_data)
 
 process_diagram = 'images/process_diagram.png'
 encoded_process_image = base64.b64encode(open(process_diagram, 'rb').read())
@@ -67,7 +93,7 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                         ],
                 placeholder="Select a Model", value ='Model'),
                 # dcc.Graph(id='map',figure=generate_all_roc_curves()),
-                # html.Div(id='cm-container'),
+                html.Div(id='cm-container'),
                         ]),
         dcc.Tab(label='Time Series Analysis', children=[
             html.Div([
@@ -95,11 +121,28 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                         ])
                         ])
 
-# @app.callback(Output(component_id = 'cm-container', component_property ='children'),
-# [Input(component_id = 'select-model',component_property = 'value')])
+
+def check_model(model_name):
+    if model_name=='log':
+        return log
+    elif model_name=='nb':
+        return nb
+    elif model_name=='forest':
+        return forest
+    elif model_name=='gradboost':
+        return gradboost
+    elif model_name=='adaboost':
+        return adaboost
+    elif model_name=='svm':
+        return svm
+
+@app.callback(Output(component_id = 'cm-container', component_property ='children'),
+[Input(component_id = 'select-model',component_property = 'value')])
 def generate_confusion_matrix(input_value):
     model = check_model(input_value)
+    model.fit(x_train, y_train)
     predictions = model.predict(x_test)
     cm = confusion_matrix(y_test, predictions)
     cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-    return go.Heatmap(x=['POS', 'NEG'], y=['POS', 'NEG'], z=cm)
+    trace = [go.Heatmap(x=['POS', 'NEG'], y=['POS', 'NEG'], z=cm)]
+    return dcc.Graph(id = 'heatmap', figure = go.Figure(data = trace))
