@@ -20,8 +20,10 @@ import base64
 # svm = joblib.load('svm.pkl')
 ## load training and test sets
 
-process_diagram = 'images/process_diagram.png' # replace with your own image
+process_diagram = 'images/process_diagram.png'
 encoded_process_image = base64.b64encode(open(process_diagram, 'rb').read())
+sarima_diagram = 'images/sarima_process.png'
+encoded_sarima_image = base64.b64encode(open(sarima_diagram, 'rb').read())
 
 app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
     html.H1('Tracking Flu Outbreaks with Twitter', style={'textAlign': 'center', 'margin': '48px 0', 'fontFamily': 'Sans-Serif'}),
@@ -60,20 +62,25 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                         ]),
         dcc.Tab(label='Time Series Analysis', children=[
             html.Div([
-                html.H1('SARIMAX process diagram here'),
+                html.H1('Time Series Analysis Overview'),
+                html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_sarima_image.decode()))]),
                 html.H1('SARIMAX metrics here'),
                 dcc.Dropdown(
                 id='select-model-metrics',
-                options=[{'label': 'Stationarity', "value": 'stationarity'},
+                options=[{'label': 'Visualizations', 'value': 'visual'},
+                {'label': 'Stationarity', "value": 'stationarity'},
                 {'label': 'ACF & PACF Plots', 'value': 'acf_pacf'},
                 {'label': 'Diagnostic Plots', 'value': 'diagnostics'},
+                {'label': 'Forecasting', 'value': 'forecasting'},
                         ],
                 placeholder="Select Model Metrics", value ='Metric'),
                         ])
                         ]),
         dcc.Tab(label='Conclusions', children=[
             html.Div([
-                html.H1('Conclusions here')
+                html.H1('Conclusions'),
+                html.H1('Limitations'),
+                html.H1('Next Steps'),
                         ])
                         ]),
                         ])
