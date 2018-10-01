@@ -11,14 +11,23 @@ from sklearn.externals import joblib
 import pandas as pd
 from twitter_package.charts import *
 import base64
+import warnings
 
-# nb = joblib.load('nb.pkl')
-# log = joblib.load('log.pkl')
-# forest = joblib.load('forest.pkl')
-# gradboost = joblib.load('gradboost.pkl')
-# adaboost = joblib.load('adaboost.pkl')
-# svm = joblib.load('svm.pkl')
-## load training and test sets
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", category=UserWarning)
+    warnings.filterwarnings("ignore", category=DeprecationWarning) 
+    nb = joblib.load('models/nb.pkl')
+    log = joblib.load('models/log.pkl')
+    forest = joblib.load('models/forest.pkl')
+    gradboost = joblib.load('models/gradboost.pkl')
+    adaboost = joblib.load('models/adaboost.pkl')
+    svm = joblib.load('models/svm.pkl')
+
+# load training and test sets
+test_data = pd.read_csv('train_test_data/test_data.csv')
+train_data = pd.read_csv('train_test_data/train_data.csv')
+y_test = pd.read_csv('train_test_data/y_test.csv')
+y_train = pd.read_csv('train_test_data/y_train.csv')
 
 process_diagram = 'images/process_diagram.png'
 encoded_process_image = base64.b64encode(open(process_diagram, 'rb').read())
