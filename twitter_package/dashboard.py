@@ -15,16 +15,26 @@ import warnings
 from nltk.corpus import stopwords
 from nltk.tokenize import TweetTokenizer, word_tokenize
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.metrics import precision_score, accuracy_score, recall_score, f1_score, confusion_matrix
+from sklearn.metrics import roc_curve, auc, roc_auc_score
+
+classifiers = []
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", category=UserWarning)
     warnings.filterwarnings("ignore", category=DeprecationWarning)
     nb = joblib.load('models/nb.pkl')
+    classifiers.append(nb)
     log = joblib.load('models/log.pkl')
+    classifiers.append(log)
     forest = joblib.load('models/forest.pkl')
+    classifiers.append(forest)
     gradboost = joblib.load('models/gradboost.pkl')
+    classifiers.append(gradboost)
     adaboost = joblib.load('models/adaboost.pkl')
+    classifiers.append(adaboost)
     svm = joblib.load('models/svm.pkl')
+    classifiers.append(svm)
 
 #load training and test sets
 test_data = pd.read_csv('train_test_data/test_data.csv', header=None)
@@ -60,6 +70,53 @@ encoded_process_image = base64.b64encode(open(process_diagram, 'rb').read())
 sarima_diagram = 'images/sarima_process.png'
 encoded_sarima_image = base64.b64encode(open(sarima_diagram, 'rb').read())
 
+def generate_classifier_name(model):
+    if model==log:
+        return 'Logistic Regression'
+    elif model==nb:
+        return 'Naive Bayes'
+    elif model==forest:
+        return 'Random Forest'
+    elif model==gradboost:
+        return "Gradient Boost"
+    elif model==adaboost:
+        return "Adaboost"
+    elif model==svm:
+        return 'Support Vector Machine'
+
+def generate_all_roc_curves():
+    lw = 2
+    data = []
+    for classifier in classifiers:
+#         print(classifier)
+        classifier_name = generate_classifier_name(classifier)
+        classifier.fit(x_test, y_test)
+        if classifier==log:
+            y_score = classifier.decision_function(x_test)
+            fpr, tpr, thresholds = roc_curve(y_test, y_score)
+#             print(y_score)
+        else:
+            y_score = classifier.predict_proba(x_test)
+            fpr, tpr, thresholds = roc_curve(y_test, y_score[:,1])
+        roc_auc = auc(fpr, tpr)
+        trace = go.Scatter(x=fpr, y=tpr,
+                           mode='lines',
+#                            line=dict(width=lw, color=color),
+                           name='{} (area = {})'.format(classifier_name, round(roc_auc,2)))
+        data.append(trace)
+    trace = go.Scatter(x=[0, 1], y=[0, 1],
+               mode='lines',
+               line=dict(width=lw, color='black', dash='dash'),
+               name='Luck')
+    data.append(trace)
+    layout = go.Layout(title='Receiver Operating Characteristic (ROC) Curve',
+                       xaxis=dict(title='False Positive Rate', showgrid=False,
+                                  range=[-0.05, 1.05]),
+                       yaxis=dict(title='True Positive Rate', showgrid=False,
+                                  range=[-0.05, 1.05]))
+    fig = go.Figure(data=data, layout=layout)
+    return fig
+
 app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
     html.H1('Tracking Flu Outbreaks with Twitter', style={'textAlign': 'center', 'margin': '48px 0', 'fontFamily': 'Sans-Serif'}),
     dcc.Tabs(id="tabs", children=[
@@ -92,8 +149,8 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                 {'label': 'Support Vector Machine', 'value': 'svm'}
                         ],
                 placeholder="Select a Model", value ='Model'),
-                # dcc.Graph(id='map',figure=generate_all_roc_curves()),
                 html.Div(id='cm-container'),
+                html.Div([dcc.Graph(id='roc',figure=generate_all_roc_curves())]),
                         ]),
         dcc.Tab(label='Time Series Analysis', children=[
             html.Div([
@@ -121,7 +178,6 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                         ])
                         ])
 
-
 def check_model(model_name):
     if model_name=='log':
         return log
@@ -145,4 +201,4 @@ def generate_confusion_matrix(input_value):
     cm = confusion_matrix(y_test, predictions)
     cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
     trace = [go.Heatmap(x=['POS', 'NEG'], y=['POS', 'NEG'], z=cm)]
-    return dcc.Graph(id = 'heatmap', figure = go.Figure(data = trace))
+    return dcc.Graph(id ='heatmap', figure = go.Figure(data = trace))
