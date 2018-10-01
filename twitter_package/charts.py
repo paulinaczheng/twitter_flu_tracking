@@ -4,3 +4,6 @@ def generate_map():
 
 def generate_confusion_matrix():
     pass
+
+def generate_roc_curve():
+    pass

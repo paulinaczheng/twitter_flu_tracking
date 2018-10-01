@@ -11,3 +11,5 @@ Data\ Cleaning.ipynb
 logs/
 FluViewPhase2Data/
 google_trends/
+2016_2018/
+*.doc2vec
