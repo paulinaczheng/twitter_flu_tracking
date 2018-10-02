@@ -181,7 +181,7 @@ def generate_vectorization_metrics(input_value):
     if input_value=='visual':
         return generate_visualizations()
     elif input_value=='stationarity':
-        return 'Stationarity'
+        return smoothing_plots()
     elif input_value=='acf_pacf':
         return 'ACF/PACF plots'
     elif input_value=='diagnostics':

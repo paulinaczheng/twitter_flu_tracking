@@ -11,6 +11,8 @@ from nltk.corpus import stopwords
 from sklearn.metrics import precision_score, accuracy_score, recall_score, f1_score, confusion_matrix, roc_curve, auc, roc_auc_score
 import dash_core_components as dcc
 import dash_html_components as html
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from statsmodels.tsa.stattools import adfuller
 
 classifiers = []
 
@@ -180,3 +182,18 @@ def generate_visualizations():
     'layout': go.Layout(xaxis={'title': 'Week'},
                         yaxis={'title': 'Count'}
                                 )})
+
+def smoothing_plots():
+    cdc_df_new = cdc_df.drop(['Date'], axis=1)
+    moving_avg = cdc_df_new.rolling(12).mean()
+    moving_std = cdc_df_new.rolling(12).std()
+    trace1 = go.Scatter(x=cdc_df['Date'], y=cdc_df['ILITOTAL'], name='Original')
+    trace2 = go.Scatter(x=cdc_df['Date'], y=moving_avg['ILITOTAL'], name='Rolling Mean')
+    trace3 = go.Scatter(x=cdc_df['Date'], y=moving_std['ILITOTAL'], name='Rolling STD')
+    data = [trace1, trace2, trace3]
+    return dcc.Graph(id='smooth-visual', figure={'data': data,
+    'layout': go.Layout(xaxis={'title': 'Week'},
+                                )})
+
+def generate_stationarity():
+    pass
