@@ -127,15 +127,26 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                 html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_process_image.decode()))])
                         ])
                         ]),
-        # dcc.Tab(label='Vectorization Overview', children=[
-        #     html.Div([
-        #         html.H1('Vectorization metrics overview here')
-        #                 ])
-        #                 ]),
+        dcc.Tab(label='Vectorization Overview', children=[
+            html.Div([
+                dcc.Dropdown(
+                id='select-vectorizer-metrics',
+                options=[{'label': 'Count Vectorization', 'value': 'count'},
+                {'label': 'TF-IDF Vectorization', "value": 'tfidf'},
+                {'label': 'Doc2Vec', 'value': 'doc2vec'},
+                        ],
+                placeholder="Select Vectorizer", value ='Vectorizer'),
+                        ])
+                        ]),
         dcc.Tab(label='Natural Language Processing', children=[
             html.Div([
                 html.H1('Chi-square values and features here'),
                 html.H1('PCA plot here')
+                        ])
+                        ]),
+        dcc.Tab(label='Exploratory Data Analysis', children=[
+            html.Div([
+                html.H1('Add EDA')
                         ])
                         ]),
         dcc.Tab(label='Models Overview', children=[
@@ -158,7 +169,7 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                 html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_sarima_image.decode()))]),
                 html.H1('SARIMAX metrics here'),
                 dcc.Dropdown(
-                id='select-model-metrics',
+                id='select-arima-metrics',
                 options=[{'label': 'Visualizations', 'value': 'visual'},
                 {'label': 'Stationarity', "value": 'stationarity'},
                 {'label': 'ACF & PACF Plots', 'value': 'acf_pacf'},
@@ -173,6 +184,8 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                 html.H1('Conclusions'),
                 html.H1('Limitations'),
                 html.H1('Next Steps'),
+                dcc.Markdown('* Include Google Trends data in time-series analyses'),
+                dcc.Markdown('* Use other time-series models (VARIMA)'),
                         ])
                         ]),
                         ])
