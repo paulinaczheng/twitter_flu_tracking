@@ -85,6 +85,8 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
             html.Div([
                 html.H1('Conclusions'),
                 html.H1('Limitations'),
+                dcc.Markdown('* ARIMA models very dependent on data trends and characteristics, requiring frequent refitting of model parameters'),
+                dcc.Markdown('* Poor ability to prospectively detect outbreaks'),
                 html.H1('Next Steps'),
                 dcc.Markdown('* Include Google Trends data in time-series analyses'),
                 dcc.Markdown('* Use other time-series models (VARIMA)'),
