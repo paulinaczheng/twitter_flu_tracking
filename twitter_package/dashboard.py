@@ -24,7 +24,15 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                 html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_process_image.decode()))])
                         ])
                         ]),
-        dcc.Tab(label='Vectorization Overview', children=[
+        dcc.Tab(label='Exploratory Data Analysis', children=[
+            html.Div([
+                    dcc.Graph(id='EDA', figure={'data': generate_eda_plot(),
+                    'layout': go.Layout(xaxis={'title': 'Flu-Related'},
+                                        yaxis={'title': 'Count'}
+                                        )})
+                        ])
+                        ]),
+        dcc.Tab(label='Natural Language Processing', children=[
             html.Div([
                 dcc.Dropdown(
                 id='select-vectorizer-metrics',
@@ -35,17 +43,12 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                 placeholder="Select Vectorizer", value ='Vectorizer'),
                         ])
                         ]),
-        dcc.Tab(label='Natural Language Processing', children=[
+        dcc.Tab(label='Feature Importance', children=[
             html.Div([
-                    dcc.Graph(id='chisquare', figure=generate_feature_importance())
-                        ])
-                        ]),
-        dcc.Tab(label='Exploratory Data Analysis', children=[
-            html.Div([
-                    dcc.Graph(id='EDA', figure={'data': generate_eda_plot(),
-                    'layout': go.Layout(xaxis={'title': 'Flu-Related?'},
-                                        yaxis={'title': 'Count'}
-                                        )})
+                    dcc.Graph(id='chisquare', figure={'data': generate_chisquare_plot(),
+                    'layout': go.Layout(xaxis={'title': 'Chi-Square Value'},
+                                        # yaxis={'title': 'Feature'}
+                                                )})
                         ])
                         ]),
         dcc.Tab(label='Models Overview', children=[

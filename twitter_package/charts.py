@@ -109,7 +109,21 @@ def generate_all_roc_curves():
     return fig
 
 def generate_feature_importance():
-    pass
+    x_train = tfidfvec2.fit_transform(train_data)
+    x_test = tfidfvec2.transform(test_data)
+    chi2score = chi2(x_train, y_train)[0]
+    wscores = list(zip(tfidfvec2.get_feature_names(), chi2score))
+    wchi2 = sorted(wscores, key=lambda x:x[1])
+    topchi2 = list(zip(*wchi2[-20:]))
+    x = range(len(topchi2[1]))
+    labels = topchi2[0]
+    return topchi2
+
+def generate_chisquare_plot():
+    topchi2 = generate_feature_importance()
+    trace1 = go.Scatter(x=list(topchi2[1]),y=list(topchi2[0]))
+    trace2 = go.Bar(x=list(topchi2[1]),y=list(topchi2[0]), orientation='h')
+    return [trace1, trace2]
 
 def generate_eda_plot():
    return [{'x': df['status'], 'y': df['counts'], 'type': 'bar'}]
