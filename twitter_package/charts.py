@@ -9,6 +9,8 @@ import warnings
 from sklearn.externals import joblib
 from nltk.corpus import stopwords
 from sklearn.metrics import precision_score, accuracy_score, recall_score, f1_score, confusion_matrix, roc_curve, auc, roc_auc_score
+import dash_core_components as dcc
+import dash_html_components as html
 
 classifiers = []
 
@@ -43,12 +45,54 @@ def tokenize(tweet):
     tknzr = TweetTokenizer(strip_handles=True, reduce_len=True, preserve_case=False)
     return tknzr.tokenize(tweet)
 
-tfidfvec2 = TfidfVectorizer(stop_words='english', tokenizer=tokenize, ngram_range=(1,2), max_features=20000)
-x_train = tfidfvec2.fit_transform(train_data)
-x_test = tfidfvec2.transform(test_data)
+tfidfvec = TfidfVectorizer(stop_words='english', tokenizer=tokenize, ngram_range=(1,3), max_features=20000)
+x_train = tfidfvec.fit_transform(train_data)
+x_test = tfidfvec.transform(test_data)
 
 df = pd.read_csv('annotated_counts.csv')
 df = df.drop('Unnamed: 0', axis=1)
+
+#import time-series data
+def clean_df(df):
+    df.reset_index(inplace=True) # Resets the index, makes factor a column
+    df.drop('PERCENTAGE OF VISITS FOR INFLUENZA-LIKE-ILLNESS REPORTED BY SENTINEL PROVIDERS',axis=1,inplace=True) # drop factor from axis 1 and make changes permanent by inplace=True
+    df.columns = df.iloc[0]
+    df = df.iloc[1:]
+    df["Date"] = pd.to_datetime(df.WEEK.astype(str)+
+                              df.YEAR.astype(str).add('-1') ,format='%W%Y-%w')
+    df.set_index(df['Date'], inplace=True)
+    df['ILITOTAL'] = df['ILITOTAL'].astype('int64')
+    return df
+
+cdc_16 = pd.read_csv('FluViewPhase2Data/16_17.csv')
+cdc_17 = pd.read_csv('FluViewPhase2Data/17_18.csv')
+
+cdc_16 = clean_df(cdc_16)
+cdc_16 = cdc_16.drop(['AGE 0-4', 'AGE 25-49', 'AGE 25-64', 'AGE 5-24',
+               'AGE 50-64', 'AGE 65', 'NUM. OF PROVIDERS', 'YEAR','WEEK',
+              '%UNWEIGHTED ILI', 'TOTAL PATIENTS'], axis=1)
+cdc_17 = clean_df(cdc_17)
+cdc_17 = cdc_17.drop(['REGION TYPE', 'REGION', 'AGE 0-4', 'AGE 25-49', 'AGE 25-64', 'AGE 5-24',
+               'AGE 50-64', 'AGE 65', 'NUM. OF PROVIDERS', 'YEAR','WEEK', '% WEIGHTED ILI',
+              '%UNWEIGHTED ILI'], axis=1)
+cdc_df = pd.concat([cdc_16, cdc_17])
+
+twitter_df = pd.read_csv('Parsed_tweets_2.csv', header=None)
+twitter_df.drop([0], axis=1, inplace=True)
+twitter_df.columns = ['original_date', 'tweet_id', 'status', 'text', 'week/year']
+twitter_df_new = pd.DataFrame(twitter_df['week/year'].str.split('/',1).tolist(),
+                                   columns = ['week','year'])
+twitter_df = twitter_df.join(twitter_df_new, how='outer')
+twitter_df["date"] = pd.to_datetime(twitter_df['week'].astype(str)+
+                                           twitter_df['year'].astype(str).add('-1') ,format='%W%Y-%w')
+twitter_df = twitter_df.groupby(['date']).size().reset_index(name='count')
+twitter_df.set_index(twitter_df['date'], inplace=True)
+twitter_df['count'] = twitter_df['count'].astype('int64')
+twitter_df = twitter_df['2016-10-03':'2018-09-10']
+
+fin_cdc_df = cdc_df.join(twitter_df, how='outer')
+fin_cdc_df.at['2018-07-30', 'count'] = 7107
+fin_cdc_df.at['2018-08-06', 'count'] = 7107
 
 def check_model(model_name):
     if model_name=='log':
@@ -109,10 +153,10 @@ def generate_all_roc_curves():
     return fig
 
 def generate_feature_importance():
-    x_train = tfidfvec2.fit_transform(train_data)
-    x_test = tfidfvec2.transform(test_data)
+    x_train = tfidfvec.fit_transform(train_data)
+    x_test = tfidfvec.transform(test_data)
     chi2score = chi2(x_train, y_train)[0]
-    wscores = list(zip(tfidfvec2.get_feature_names(), chi2score))
+    wscores = list(zip(tfidfvec.get_feature_names(), chi2score))
     wchi2 = sorted(wscores, key=lambda x:x[1])
     topchi2 = list(zip(*wchi2[-20:]))
     x = range(len(topchi2[1]))
@@ -127,3 +171,12 @@ def generate_chisquare_plot():
 
 def generate_eda_plot():
    return [{'x': df['status'], 'y': df['counts'], 'type': 'bar'}]
+
+def generate_visualizations():
+    trace1 = go.Scatter(x=cdc_df['Date'], y=cdc_df['ILITOTAL'], name='CDC Visits')
+    trace2 = go.Scatter(x=twitter_df['date'], y=twitter_df['count'], name='Flu-Related Tweets')
+    data = [trace1, trace2]
+    return dcc.Graph(id='ts-visual', figure={'data': data,
+    'layout': go.Layout(xaxis={'title': 'Week'},
+                        yaxis={'title': 'Count'}
+                                )})
