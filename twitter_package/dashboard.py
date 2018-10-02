@@ -146,7 +146,10 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                         ]),
         dcc.Tab(label='Exploratory Data Analysis', children=[
             html.Div([
-                html.H1('Add EDA')
+                    dcc.Graph(id='EDA', figure={'data': generate_eda_plot(),
+                    'layout': go.Layout(xaxis={'title': 'Flu-Related?'},
+                                        yaxis={'title': 'Count'}
+                                        )})
                         ])
                         ]),
         dcc.Tab(label='Models Overview', children=[
