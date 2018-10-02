@@ -1,5 +1,3 @@
-import dash_core_components as dcc
-import dash_html_components as html
 from twitter_package import *
 import plotly.plotly as py
 import plotly.graph_objs as go
@@ -181,7 +179,7 @@ def generate_confusion_matrix(input_value):
 [Input(component_id = 'select-arima-metrics',component_property = 'value')])
 def generate_vectorization_metrics(input_value):
     if input_value=='visual':
-        return 'Visual'
+        return generate_visualizations()
     elif input_value=='stationarity':
         return 'Stationarity'
     elif input_value=='acf_pacf':
