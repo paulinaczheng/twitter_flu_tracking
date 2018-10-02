@@ -6,6 +6,7 @@ import plotly.graph_objs as go
 import json
 import dash
 from dash.dependencies import Input, Output, State
+import dash_table_experiments as dt
 from twitter_package.charts import *
 import base64
 
