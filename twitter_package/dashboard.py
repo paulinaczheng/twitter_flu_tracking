@@ -10,10 +10,26 @@ import dash_table_experiments as dt
 from twitter_package.charts import *
 import base64
 
+#load metrics sets
+count_df = pd.read_csv('count_metrics.csv')
+count_df = count_df.drop('Unnamed: 0', axis=1)
+tfidf_df = pd.read_csv('tfidf_metrics.csv')
+tfidf_df = tfidf_df.drop('Unnamed: 0', axis=1)
+doc2vec_df = pd.read_csv('doc2vec_metrics.csv')
+doc2vec_df.rename(columns={'Unnamed: 0': 'Training Method (n-gram)'}, inplace=True)
+
 process_diagram = 'images/process_diagram.png'
 encoded_process_image = base64.b64encode(open(process_diagram, 'rb').read())
 sarima_diagram = 'images/sarima_process.png'
 encoded_sarima_image = base64.b64encode(open(sarima_diagram, 'rb').read())
+
+dataframes = {'COUNT_DF': count_df,
+              'TFIDF_DF': tfidf_df,
+              'DOC2VEC_DF': doc2vec_df
+              }
+
+def get_data_object(user_selection):
+    return dataframes[user_selection]
 
 app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
     html.H1('Tracking Flu Outbreaks with Twitter', style={'textAlign': 'center', 'margin': '48px 0', 'fontFamily': 'Sans-Serif'}),
@@ -35,14 +51,40 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                         ]),
         dcc.Tab(label='Natural Language Processing', children=[
             html.Div([
+                # dcc.Dropdown(
+                # id='select-vectorizer-metrics',
+                # options=[{'label': 'Count Vectorization', 'value': 'count'},
+                # {'label': 'TF-IDF Vectorization', "value": 'tfidf'},
+                # {'label': 'Doc2Vec', 'value': 'doc2vec'},
+                #         ],
+                # placeholder="Select Vectorizer", value ='Vectorizer'),
+                # dcc.RadioItems(
+                # id='select-vectorizer-metrics',
+                # options=[{'label': 'Count Vectorization', 'value': 'count'},
+                #         {'label': 'TF-IDF Vectorization', "value": 'tfidf'},
+                #         {'label': 'Doc2Vec', 'value': 'doc2vec'},
+                #             ],
+                #         value='count',
+                #         labelStyle={'display': 'inline-block'}),
+                # html.Div(id='vec-container'),
+                html.H4('DataTable'),
+                html.Label('Report type:', style={'font-weight': 'bold'}),
                 dcc.Dropdown(
-                id='select-vectorizer-metrics',
-                options=[{'label': 'Count Vectorization', 'value': 'count'},
-                {'label': 'TF-IDF Vectorization', "value": 'tfidf'},
-                {'label': 'Doc2Vec', 'value': 'doc2vec'},
-                        ],
-                placeholder="Select Vectorizer", value ='Vectorizer'),
-                html.Div(id='vec-container'),
+                    id='field-dropdown',
+                    options=[{'label': df, 'value': df} for df in dataframes],
+                    value='DF_COUNT',
+                    clearable=False
+                            ),
+                dt.DataTable(
+                    # Initialise the rows
+                    rows=[{}],
+                    row_selectable=True,
+                    filterable=True,
+                    sortable=True,
+                    selected_row_indices=[],
+                    id='table'
+                            ),
+                # html.Div(id='selected-indexes')
                         ])
                         ]),
         dcc.Tab(label='Feature Importance', children=[
@@ -121,12 +163,17 @@ def generate_confusion_matrix(input_value):
     trace = [go.Heatmap(x=['POS', 'NEG'], y=['POS', 'NEG'], z=cm)]
     return dcc.Graph(id ='heatmap', figure = go.Figure(data = trace))
 
-@app.callback(Output(component_id = 'vec-container', component_property ='children'),
-[Input(component_id = 'select-vectorizer-metrics',component_property = 'value')])
-def generate_vectorization_metrics(input_value):
-    if input_value=='count':
-        return 'Count'
-    elif input_value=='tfidf':
-        return 'TF-IDF'
-    elif input_value=='doc2vec':
-        return 'Doc2Vec'
+# @app.callback(Output(component_id = 'vec-container', component_property ='children'),
+# [Input(component_id = 'select-vectorizer-metrics',component_property = 'value')])
+# def generate_vectorization_metrics(input_value):
+#     if input_value=='count':
+#         return 'Count'
+#     elif input_value=='tfidf':
+#         return 'TF-IDF'
+#     elif input_value=='doc2vec':
+#         return 'Doc2Vec'
+
+@app.callback(Output('table', 'rows'), [Input('field-dropdown', 'value')])
+def update_table(user_selection):
+    df = get_data_object(user_selection)
+    return df.to_dict('records')

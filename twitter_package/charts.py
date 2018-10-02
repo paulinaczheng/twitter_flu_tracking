@@ -50,14 +50,6 @@ x_test = tfidfvec2.transform(test_data)
 df = pd.read_csv('annotated_counts.csv')
 df = df.drop('Unnamed: 0', axis=1)
 
-#load metrics sets
-count_df = pd.read_csv('count_metrics.csv')
-count_df = count_df.drop('Unnamed: 0', axis=1)
-tfidf_df = pd.read_csv('tfidf_metrics.csv')
-tfidf_df = tfidf_df.drop('Unnamed: 0', axis=1)
-doc2vec_df = pd.read_csv('doc2vec_metrics.csv')
-doc2vec_df.rename(columns={'Unnamed: 0': 'Training Method (n-gram)'}, inplace=True)
-
 def check_model(model_name):
     if model_name=='log':
         return log
