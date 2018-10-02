@@ -112,7 +112,6 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
             html.Div([
                 html.H1('Time Series Analysis Overview'),
                 html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_sarima_image.decode()))]),
-                html.H1('SARIMAX metrics here'),
                 dcc.Dropdown(
                 id='select-arima-metrics',
                 options=[{'label': 'Visualizations', 'value': 'visual'},
@@ -122,17 +121,22 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                 {'label': 'Forecasting', 'value': 'forecasting'},
                         ],
                 placeholder="Select Model Metrics", value ='Metric'),
+                html.Div(id='ts-container'),
                         ])
                         ]),
         dcc.Tab(label='Conclusions', children=[
             html.Div([
                 html.H1('Conclusions'),
+                dcc.Markdown('* Logistic regression was the best-performing classifier, with TF-IDF vectorization (with trigrams) used to process the annotated tweets'),
+                dcc.Markdown('* The SARIMA model that included both CDC & Twitter data did better at one-step ahead forecasting than the SARIMA model with just CDC data, using RMSE as a metric.'),
+                dcc.Markdown('* This implies that flu-related tweets contribute to the SARIMA model in some way that improves the predictive ability of the SARIMA model'),
                 html.H1('Limitations'),
                 dcc.Markdown('* ARIMA models very dependent on data trends and characteristics, requiring frequent refitting of model parameters'),
                 dcc.Markdown('* Poor ability to prospectively detect outbreaks'),
                 html.H1('Next Steps'),
+                dcc.Markdown('* Add more annotated tweets to train classifiers on'),
                 dcc.Markdown('* Include Google Trends data in time-series analyses'),
-                dcc.Markdown('* Use other time-series models (VARIMA)'),
+                dcc.Markdown('* Use other time-series libraries/models for better forecasting (VARIMA, FBProphet)'),
                         ])
                         ]),
                         ])
@@ -172,6 +176,20 @@ def generate_confusion_matrix(input_value):
 #         return 'TF-IDF'
 #     elif input_value=='doc2vec':
 #         return 'Doc2Vec'
+
+@app.callback(Output(component_id = 'ts-container', component_property ='children'),
+[Input(component_id = 'select-arima-metrics',component_property = 'value')])
+def generate_vectorization_metrics(input_value):
+    if input_value=='visual':
+        return 'Visual'
+    elif input_value=='stationarity':
+        return 'Stationarity'
+    elif input_value=='acf_pacf':
+        return 'ACF/PACF plots'
+    elif input_value=='diagnostics':
+        return 'Diagnostics'
+    elif input_value=='forecasting':
+        return 'Forecasting'
 
 @app.callback(Output('table', 'rows'), [Input('field-dropdown', 'value')])
 def update_table(user_selection):
