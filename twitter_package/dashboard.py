@@ -41,13 +41,13 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                 {'label': 'Doc2Vec', 'value': 'doc2vec'},
                         ],
                 placeholder="Select Vectorizer", value ='Vectorizer'),
+                html.Div(id='vec-container'),
                         ])
                         ]),
         dcc.Tab(label='Feature Importance', children=[
             html.Div([
                     dcc.Graph(id='chisquare', figure={'data': generate_chisquare_plot(),
                     'layout': go.Layout(xaxis={'title': 'Chi-Square Value'},
-                                        # yaxis={'title': 'Feature'}
                                                 )})
                         ])
                         ]),
@@ -119,3 +119,13 @@ def generate_confusion_matrix(input_value):
     cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
     trace = [go.Heatmap(x=['POS', 'NEG'], y=['POS', 'NEG'], z=cm)]
     return dcc.Graph(id ='heatmap', figure = go.Figure(data = trace))
+
+@app.callback(Output(component_id = 'vec-container', component_property ='children'),
+[Input(component_id = 'select-vectorizer-metrics',component_property = 'value')])
+def generate_vectorization_metrics(input_value):
+    if input_value=='count':
+        return 'Count'
+    elif input_value=='tfidf':
+        return 'TF-IDF'
+    elif input_value=='doc2vec':
+        return 'Doc2Vec'
