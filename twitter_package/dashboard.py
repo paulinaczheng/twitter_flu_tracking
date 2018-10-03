@@ -172,7 +172,8 @@ def generate_confusion_matrix(input_value):
     predictions = model.predict(x_test)
     cm = confusion_matrix(y_test, predictions)
     cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-    trace = [go.Heatmap(x=['RELATED', 'UNRELATED'], y=['RELATED', 'UNRELATED'], z=cm)]
+    trace = [go.Heatmap(x=['RELATED', 'UNRELATED'], y=['RELATED', 'UNRELATED'], z=cm,
+                        colorscale='Viridis')]
     layout = go.Layout(title='Confusion Matrix',
                            xaxis=dict(title='Actual Class',
                                       range=[0, 0.5, 1]),
@@ -203,7 +204,7 @@ def generate_roc_curve(input_value):
     trace = go.Scatter(x=[0, 1], y=[0, 1],
                mode='lines',
                line=dict(width=lw, color='black', dash='dash'),
-               name='Luck')
+               name='Chance')
     data.append(trace)
     layout = go.Layout(title='Receiver Operating Characteristic (ROC) Curve',
                        xaxis=dict(title='False Positive Rate', showgrid=False,
