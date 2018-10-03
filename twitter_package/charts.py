@@ -21,6 +21,8 @@ sarima_diagram = 'images/sarima_process.png'
 encoded_sarima_image = base64.b64encode(open(sarima_diagram, 'rb').read())
 acf_pacf_diagram = 'images/acf_pacf.png'
 encoded_acf_pacf_image = base64.b64encode(open(acf_pacf_diagram, 'rb').read())
+diagnostics_diagram = 'images/diagnostics.png'
+encoded_diagnostics_image = base64.b64encode(open(diagnostics_diagram, 'rb').read())
 
 classifiers = []
 
@@ -205,3 +207,6 @@ def smoothing_plots():
 
 def acf_pacf_plots():
     return html.Img(src='data:image/png;base64,{}'.format(encoded_acf_pacf_image.decode()))
+
+def diagnostics_plots():
+    return html.Img(src='data:image/png;base64,{}'.format(encoded_diagnostics_image.decode()))

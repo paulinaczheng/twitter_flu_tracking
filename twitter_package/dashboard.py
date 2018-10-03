@@ -181,7 +181,7 @@ def generate_vectorization_metrics(input_value):
     elif input_value=='acf_pacf':
         return acf_pacf_plots()
     elif input_value=='diagnostics':
-        return 'Diagnostics'
+        return diagnostics_plots()
     elif input_value=='forecasting':
         return 'Forecasting'
 
