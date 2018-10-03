@@ -30,7 +30,6 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
             html.Div([
                 html.H1('Project Process Overview'),
                 dcc.Markdown('The project was defined by two phases: (1) training machine learning classification models to identify flu-related tweets and (2) conducting time-series analyses with identified tweets and CDC data.'),
-                dcc.Markdown('***'),
                 html.Div([
                         html.Img(src='data:image/png;base64,{}'.format(encoded_process_image.decode()))
                         ])
@@ -41,8 +40,10 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                     dcc.Graph(id='EDA', figure={'data': generate_eda_plot(),
                     'layout': go.Layout(xaxis={'title': 'Flu-Related'},
                                         yaxis={'title': 'Count'},
-                                        title='Status Distribution of Annotated Tweets'
-                                        )})
+                                        title='Status Distribution of Annotated Tweets',
+                                        )},
+                                # style={'display': 'inline-block'}
+                                )
                         ])
                         ]),
         dcc.Tab(label='Natural Language Processing', children=[
@@ -71,13 +72,15 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
             html.Div([
                     dcc.Graph(id='chisquare', figure={'data': generate_chisquare_plot(),
                     'layout': go.Layout(xaxis={'title': 'Chi-Square Value'},
-                                                )})
+                                        showlegend=False,
+                                                )},
+                            # style={'display': 'inline-block'}
+                                                )
                         ])
                         ]),
         dcc.Tab(label='Doc2Vec: PCA', children=[
             html.Div([
                 dcc.Markdown("*Explained variance ratio is 3.82%, 96.18% is lost by reducing the dimensionality*"),
-                dcc.Markdown('***'),
                 dcc.RadioItems(
                 id='select-pca-visualization',
                 options=[{'label': 'Line Plot', 'value': 'line'},
