@@ -23,6 +23,8 @@ acf_pacf_diagram = 'images/acf_pacf.png'
 encoded_acf_pacf_image = base64.b64encode(open(acf_pacf_diagram, 'rb').read())
 diagnostics_diagram = 'images/diagnostics.png'
 encoded_diagnostics_image = base64.b64encode(open(diagnostics_diagram, 'rb').read())
+forecasting_diagram = 'images/one_step_ahead_forecasting.png'
+encoded_forecasting_image = base64.b64encode(open(forecasting_diagram, 'rb').read())
 
 classifiers = []
 
@@ -134,35 +136,35 @@ def generate_classifier_name(model):
     elif model==svm:
         return 'Support Vector Machine'
 
-def generate_all_roc_curves():
-    lw = 2
-    data = []
-    for classifier in classifiers:
-        classifier_name = generate_classifier_name(classifier)
-        classifier.fit(x_test, y_test)
-        if classifier==log:
-            y_score = classifier.decision_function(x_test)
-            fpr, tpr, thresholds = roc_curve(y_test, y_score)
-        else:
-            y_score = classifier.predict_proba(x_test)
-            fpr, tpr, thresholds = roc_curve(y_test, y_score[:,1])
-        roc_auc = auc(fpr, tpr)
-        trace = go.Scatter(x=fpr, y=tpr,
-                           mode='lines',
-                           name='{} (area = {})'.format(classifier_name, round(roc_auc,2)))
-        data.append(trace)
-    trace = go.Scatter(x=[0, 1], y=[0, 1],
-               mode='lines',
-               line=dict(width=lw, color='black', dash='dash'),
-               name='Luck')
-    data.append(trace)
-    layout = go.Layout(title='Receiver Operating Characteristic (ROC) Curve',
-                       xaxis=dict(title='False Positive Rate', showgrid=False,
-                                  range=[-0.05, 1.05]),
-                       yaxis=dict(title='True Positive Rate', showgrid=False,
-                                  range=[-0.05, 1.05]))
-    fig = go.Figure(data=data, layout=layout)
-    return fig
+# def generate_all_roc_curves():
+#     lw = 2
+#     data = []
+#     for classifier in classifiers:
+#         classifier_name = generate_classifier_name(classifier)
+#         classifier.fit(x_test, y_test)
+#         if classifier==log:
+#             y_score = classifier.decision_function(x_test)
+#             fpr, tpr, thresholds = roc_curve(y_test, y_score)
+#         else:
+#             y_score = classifier.predict_proba(x_test)
+#             fpr, tpr, thresholds = roc_curve(y_test, y_score[:,1])
+#         roc_auc = auc(fpr, tpr)
+#         trace = go.Scatter(x=fpr, y=tpr,
+#                            mode='lines',
+#                            name='{} (area = {})'.format(classifier_name, round(roc_auc,2)))
+#         data.append(trace)
+#     trace = go.Scatter(x=[0, 1], y=[0, 1],
+#                mode='lines',
+#                line=dict(width=lw, color='black', dash='dash'),
+#                name='Luck')
+#     data.append(trace)
+#     layout = go.Layout(title='Receiver Operating Characteristic (ROC) Curve',
+#                        xaxis=dict(title='False Positive Rate', showgrid=False,
+#                                   range=[-0.05, 1.05]),
+#                        yaxis=dict(title='True Positive Rate', showgrid=False,
+#                                   range=[-0.05, 1.05]))
+#     fig = go.Figure(data=data, layout=layout)
+#     return fig
 
 def generate_feature_importance():
     x_train = tfidfvec.fit_transform(train_data)
@@ -210,3 +212,6 @@ def acf_pacf_plots():
 
 def diagnostics_plots():
     return html.Img(src='data:image/png;base64,{}'.format(encoded_diagnostics_image.decode()))
+
+def forecasting_plots():
+    return html.Img(src='data:image/png;base64,{}'.format(encoded_forecasting_image.decode()))
