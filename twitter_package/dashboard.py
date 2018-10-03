@@ -88,6 +88,11 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                                                 )})
                         ])
                         ]),
+        dcc.Tab(label='Doc2Vec: PCA', children=[
+            html.Div([
+                    html.H1('PCA plot here')
+                        ])
+                        ]),
         dcc.Tab(label='Models Overview', children=[
                 dcc.Dropdown(
                 id='select-model',
