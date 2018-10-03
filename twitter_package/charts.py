@@ -321,8 +321,14 @@ def generate_eda_plot():
    # return [{'x': df['status'], 'y': df['counts'], 'type': 'bar'}]
 
 def generate_visualizations():
-    trace1 = go.Scatter(x=cdc_df['Date'], y=cdc_df['ILITOTAL'], name='CDC Visits')
-    trace2 = go.Scatter(x=twitter_df['date'], y=twitter_df['count'], name='Flu-Related Tweets')
+    trace1 = go.Scatter(x=cdc_df['Date'], y=cdc_df['ILITOTAL'], name='CDC Visits',
+                        line = dict(
+                        color = '#7A69C7',
+                        width = 2,))
+    trace2 = go.Scatter(x=twitter_df['date'], y=twitter_df['count'], name='Flu-Related Tweets',
+                        line = dict(
+                        color = '#C76977',
+                        width = 2,))
     data = [trace1, trace2]
     return dcc.Graph(id='ts-visual', figure={'data': data,
     'layout': go.Layout(xaxis={'title': 'Week'},
@@ -333,9 +339,18 @@ def smoothing_plots():
     cdc_df_new = cdc_df.drop(['Date'], axis=1)
     moving_avg = cdc_df_new.rolling(12).mean()
     moving_std = cdc_df_new.rolling(12).std()
-    trace1 = go.Scatter(x=cdc_df['Date'], y=cdc_df['ILITOTAL'], name='Original')
-    trace2 = go.Scatter(x=cdc_df['Date'], y=moving_avg['ILITOTAL'], name='Rolling Mean')
-    trace3 = go.Scatter(x=cdc_df['Date'], y=moving_std['ILITOTAL'], name='Rolling STD')
+    trace1 = go.Scatter(x=cdc_df['Date'], y=cdc_df['ILITOTAL'], name='Original',
+                        line = dict(
+                        color = '#7A69C7',
+                        width = 2,))
+    trace2 = go.Scatter(x=cdc_df['Date'], y=moving_avg['ILITOTAL'], name='Rolling Mean',
+                        line = dict(
+                        color = '#C76977',
+                        width = 2,))
+    trace3 = go.Scatter(x=cdc_df['Date'], y=moving_std['ILITOTAL'], name='Rolling STD',
+                        line = dict(
+                        color = '#69C7A1',
+                        width = 2,))
     data = [trace1, trace2, trace3]
     return dcc.Graph(id='smooth-visual', figure={'data': data,
     'layout': go.Layout(xaxis={'title': 'Week'},
