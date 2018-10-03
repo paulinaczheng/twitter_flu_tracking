@@ -6,7 +6,6 @@ import dash
 from dash.dependencies import Input, Output, State
 import dash_table_experiments as dt
 from twitter_package.charts import *
-import base64
 
 #load metrics sets
 count_df = pd.read_csv('count_metrics.csv')
@@ -15,11 +14,6 @@ tfidf_df = pd.read_csv('tfidf_metrics.csv')
 tfidf_df = tfidf_df.drop('Unnamed: 0', axis=1)
 doc2vec_df = pd.read_csv('doc2vec_metrics.csv')
 doc2vec_df.rename(columns={'Unnamed: 0': 'Training Method (n-gram)'}, inplace=True)
-
-process_diagram = 'images/process_diagram.png'
-encoded_process_image = base64.b64encode(open(process_diagram, 'rb').read())
-sarima_diagram = 'images/sarima_process.png'
-encoded_sarima_image = base64.b64encode(open(sarima_diagram, 'rb').read())
 
 dataframes = {'COUNT_DF': count_df,
               'TFIDF_DF': tfidf_df,
@@ -36,7 +30,9 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
             html.Div([
                 html.H1('Project Process Overview'),
                 dcc.Markdown('The project was defined by two phases: (1) training machine learning classification models to identify flu-related tweets and (2) conducting time-series analyses with identified tweets and CDC data.'),
-                html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_process_image.decode()))])
+                html.Div([
+                        html.Img(src='data:image/png;base64,{}'.format(encoded_process_image.decode()))
+                        ])
                         ])
                         ]),
         dcc.Tab(label='Exploratory Data Analysis', children=[
@@ -183,7 +179,7 @@ def generate_vectorization_metrics(input_value):
     elif input_value=='stationarity':
         return smoothing_plots()
     elif input_value=='acf_pacf':
-        return 'ACF/PACF plots'
+        return acf_pacf_plots()
     elif input_value=='diagnostics':
         return 'Diagnostics'
     elif input_value=='forecasting':

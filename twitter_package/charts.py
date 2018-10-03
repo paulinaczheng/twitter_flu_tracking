@@ -13,6 +13,14 @@ import dash_core_components as dcc
 import dash_html_components as html
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import adfuller
+import base64
+
+process_diagram = 'images/process_diagram.png'
+encoded_process_image = base64.b64encode(open(process_diagram, 'rb').read())
+sarima_diagram = 'images/sarima_process.png'
+encoded_sarima_image = base64.b64encode(open(sarima_diagram, 'rb').read())
+acf_pacf_diagram = 'images/acf_pacf.png'
+encoded_acf_pacf_image = base64.b64encode(open(acf_pacf_diagram, 'rb').read())
 
 classifiers = []
 
@@ -195,5 +203,5 @@ def smoothing_plots():
     'layout': go.Layout(xaxis={'title': 'Week'},
                                 )})
 
-def generate_stationarity():
-    pass
+def acf_pacf_plots():
+    return html.Img(src='data:image/png;base64,{}'.format(encoded_acf_pacf_image.decode()))
