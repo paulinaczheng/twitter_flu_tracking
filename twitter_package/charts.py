@@ -230,8 +230,14 @@ def generate_pca_line_plot():
     d2v_std_val = scaler.fit_transform(validation_vecs)
     d2v_pca = PCA().fit(d2v_std)
     x_values = list(range(1, d2v_pca.n_components_+1))
-    trace1 = go.Scatter(x=x_values, y=d2v_pca.explained_variance_ratio_, name='explained variance')
-    trace2 = go.Scatter(x=x_values, y=np.cumsum(d2v_pca.explained_variance_ratio_), name='cumulative explained variance')
+    trace1 = go.Scatter(x=x_values, y=d2v_pca.explained_variance_ratio_, name='explained variance',
+                        line = dict(
+                        color = '#900C3F',
+                        width = 2,))
+    trace2 = go.Scatter(x=x_values, y=np.cumsum(d2v_pca.explained_variance_ratio_), name='cumulative explained variance',
+                        line = dict(
+                        color =  '#6973C7',
+                        width = 2,))
     data = [trace1, trace2]
     return dcc.Graph(id='pca-line-visual', figure={'data': data,
     'layout': go.Layout(xaxis={'title': 'Principal Component'},
@@ -284,7 +290,6 @@ def doc2vec_3d_plot():
     for key, value in status_num.items():
         df = doc_vectors_3d_with_status[doc_vectors_3d_with_status['status'] == value]
         traces_for_plot.append(df)
-
     traces_status = []
     for trace in traces_for_plot:
         trace1 = go.Scatter3d(
