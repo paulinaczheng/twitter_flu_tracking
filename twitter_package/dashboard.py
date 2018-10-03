@@ -183,8 +183,13 @@ def generate_confusion_matrix(input_value):
     predictions = model.predict(x_test)
     cm = confusion_matrix(y_test, predictions)
     cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-    trace = [go.Heatmap(x=['POS', 'NEG'], y=['POS', 'NEG'], z=cm)]
-    return dcc.Graph(id ='heatmap', figure = go.Figure(data = trace), style={'display': 'inline-block'})
+    trace = [go.Heatmap(x=['RELATED', 'UNRELATED'], y=['RELATED', 'UNRELATED'], z=cm)]
+    layout = go.Layout(title='Confusion Matrix',
+                           xaxis=dict(title='Actual Class',
+                                      range=[0, 0.5, 1]),
+                           yaxis=dict(title='Predicted Class',
+                                      range=[0, 0.5, 1]))
+    return dcc.Graph(id ='heatmap', figure = go.Figure(data = trace, layout= layout), style={'display': 'inline-block'})
 
 # @app.callback(Output(component_id = 'roc-container', component_property ='children'),
 # [Input(component_id = 'select-model',component_property = 'value')])
