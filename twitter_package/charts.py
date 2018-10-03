@@ -18,6 +18,9 @@ from gensim.models import Doc2Vec
 from gensim.models.doc2vec import TaggedDocument
 import multiprocessing
 from sklearn.decomposition import PCA
+from tqdm import tqdm
+tqdm.pandas(desc="progress-bar")
+from sklearn.preprocessing import StandardScaler
 
 cores = multiprocessing.cpu_count()
 
@@ -192,6 +195,45 @@ def generate_chisquare_plot():
     trace1 = go.Scatter(x=list(topchi2[1]),y=list(topchi2[0]))
     trace2 = go.Bar(x=list(topchi2[1]),y=list(topchi2[0]), orientation='h')
     return [trace1, trace2]
+
+def labelize_tweets(tweets,label):
+    result = []
+    prefix = label
+    for i, t in zip(tweets.index, tweets):
+        result.append(TaggedDocument(t.split(), [prefix + '_%s' % i]))
+    return result
+
+all_x = t_df['text']
+all_x_w2v = labelize_tweets(all_x, 'all')
+
+def get_vectors(model, corpus, size):
+    vecs = np.zeros((len(corpus), size))
+    n = 0
+    for i in corpus.index:
+        prefix = 'all_' + str(i)
+        vecs[n] = model.docvecs[prefix]
+        n += 1
+    return vecs
+
+model_dbow = Doc2Vec(dm=0, vector_size=100, negative=5, min_count=0, workers=cores, alpha=0.065, min_alpha=0.065)
+model_dbow.build_vocab([x for x in tqdm(all_x_w2v)])
+
+train_vecs = get_vectors(model_dbow, train_data, 100)
+validation_vecs = get_vectors(model_dbow, test_data, 100)
+
+def generate_pca_line_plot():
+    scaler = StandardScaler()
+    d2v_std = scaler.fit_transform(train_vecs)
+    d2v_std_val = scaler.fit_transform(validation_vecs)
+    d2v_pca = PCA().fit(d2v_std)
+    x_values = list(range(1, d2v_pca.n_components_+1))
+    trace1 = go.Scatter(x=x_values, y=d2v_pca.explained_variance_ratio_, name='explained variance')
+    trace2 = go.Scatter(x=x_values, y=np.cumsum(d2v_pca.explained_variance_ratio_), name='cumulative explained variance')
+    data = [trace1, trace2]
+    return dcc.Graph(id='pca-line-visual', figure={'data': data,
+    'layout': go.Layout(xaxis={'title': 'Principal Component'},
+                        yaxis={'title': 'Explained Variance'}
+                                )})
 
 # Create TaggedDocument objects for corpus
 corpus = []
