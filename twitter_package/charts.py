@@ -192,8 +192,11 @@ def generate_feature_importance():
 
 def generate_chisquare_plot():
     topchi2 = generate_feature_importance()
-    trace1 = go.Scatter(x=list(topchi2[1]),y=list(topchi2[0]))
-    trace2 = go.Bar(x=list(topchi2[1]),y=list(topchi2[0]), orientation='h')
+    trace1 = go.Scatter(x=list(topchi2[1]),y=list(topchi2[0]),
+                        line = dict(color = ('rgb(189,189,189)'),width = 2,))
+    trace2 = go.Bar(x=list(topchi2[1]),y=list(topchi2[0]),
+                    marker=dict(color=list(range(0,20)),colorscale='Viridis'),
+                    orientation='h')
     return [trace1, trace2]
 
 def labelize_tweets(tweets,label):
