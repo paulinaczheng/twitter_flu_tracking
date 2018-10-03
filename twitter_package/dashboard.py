@@ -90,7 +90,14 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                         ]),
         dcc.Tab(label='Doc2Vec: PCA', children=[
             html.Div([
-                    html.H1('PCA plot here')
+                dcc.RadioItems(
+                id='select-pca-visualization',
+                options=[{'label': 'Line Plot', 'value': 'line'},
+                        {'label': '3D Visualization', "value": '3d'},
+                            ],
+                        value='line',
+                        labelStyle={'display': 'inline-block'}),
+                html.Div(id='pca-container'),
                         ])
                         ]),
         dcc.Tab(label='Models Overview', children=[
@@ -145,6 +152,14 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                         ]),
                         ])
                         ])
+
+@app.callback(Output(component_id = 'pca-container', component_property ='children'),
+[Input(component_id = 'select-pca-visualization',component_property = 'value')])
+def generate_pca_plot(input_value):
+    if input_value=='line':
+        return 'Line'
+    elif input_value=='3d':
+        return '3D'
 
 def check_model(model_name):
     if model_name=='log':
