@@ -157,7 +157,7 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
 [Input(component_id = 'select-pca-visualization',component_property = 'value')])
 def generate_pca_plot(input_value):
     if input_value=='line':
-        return 'Line'
+        return generate_pca_line_plot()
     elif input_value=='3d':
         return doc2vec_3d_plot()
 
