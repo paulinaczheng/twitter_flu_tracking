@@ -39,7 +39,8 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
             html.Div([
                     dcc.Graph(id='EDA', figure={'data': generate_eda_plot(),
                     'layout': go.Layout(xaxis={'title': 'Flu-Related'},
-                                        yaxis={'title': 'Count'}
+                                        yaxis={'title': 'Count'},
+                                        title='Status Distribution of Annotated Tweets'
                                         )})
                         ])
                         ]),

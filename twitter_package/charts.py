@@ -291,7 +291,12 @@ def doc2vec_3d_plot():
                     )
 
 def generate_eda_plot():
-   return [{'x': df['status'], 'y': df['counts'], 'type': 'bar'}]
+    return [dict(x=['Unrelated', 'Related'],
+    y=df['counts'], type='bar',
+    text=['tweets identified as not indicative of a flu infection', 'tweets identified as indicative of a flu infection'],
+    marker=dict(color=['rgb(158,202,225)','rgba(204,204,204,1)']),
+                )]
+   # return [{'x': df['status'], 'y': df['counts'], 'type': 'bar'}]
 
 def generate_visualizations():
     trace1 = go.Scatter(x=cdc_df['Date'], y=cdc_df['ILITOTAL'], name='CDC Visits')
