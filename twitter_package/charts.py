@@ -14,6 +14,12 @@ import dash_html_components as html
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import adfuller
 import base64
+from gensim.models import Doc2Vec
+from gensim.models.doc2vec import TaggedDocument
+import multiprocessing
+from sklearn.decomposition import PCA
+
+cores = multiprocessing.cpu_count()
 
 process_diagram = 'images/process_diagram.png'
 encoded_process_image = base64.b64encode(open(process_diagram, 'rb').read())
@@ -65,6 +71,10 @@ x_test = tfidfvec.transform(test_data)
 
 df = pd.read_csv('annotated_counts.csv')
 df = df.drop('Unnamed: 0', axis=1)
+
+#import annotated data
+t_df = pd.read_csv('annotated_tweets.csv', engine='python')
+t_df = t_df.drop('Unnamed: 0', axis=1)
 
 #import time-series data
 def clean_df(df):
@@ -182,6 +192,61 @@ def generate_chisquare_plot():
     trace1 = go.Scatter(x=list(topchi2[1]),y=list(topchi2[0]))
     trace2 = go.Bar(x=list(topchi2[1]),y=list(topchi2[0]), orientation='h')
     return [trace1, trace2]
+
+# Create TaggedDocument objects for corpus
+corpus = []
+for i in range(0, len(t_df)):
+    doc = TaggedDocument(t_df['text'][i].split(), [t_df['status'][i]])
+    corpus.append(doc)
+
+#dbow unigram
+model = Doc2Vec(dm=0, vector_size=100, negative=5, min_count=0, workers=cores, alpha=0.065, min_alpha=0.065)
+model.build_vocab(corpus)
+doc_vectors = [model.infer_vector(corpus[i].words) for i in range(0,len(corpus))]
+
+pca = PCA(n_components = 3)
+pca.fit(doc_vectors)
+doc_vectors_3d = pca.transform(doc_vectors) # transform the vectors to 3d space
+
+# Dataframes for plotting
+doc_vectors_3d = pd.DataFrame(doc_vectors_3d)
+
+# create status dictionaries for mapping
+status = list(set((t_df['status'])))
+num = list(range(0,len(status)))
+status_num = dict(zip(status, num))
+
+# by author
+status_df = pd.DataFrame([corpus[i].tags[0] for i in range(0, len(corpus))])
+doc_vectors_3d_with_status =pd.concat([doc_vectors_3d,status_df], axis = 1)
+doc_vectors_3d_with_status.columns = ['x','y','z','status']
+doc_vectors_3d_with_status['status'] = doc_vectors_3d_with_status['status'].map(status_num)
+
+def doc2vec_3d_plot():
+    traces_for_plot = []
+    for key, value in status_num.items():
+        df = doc_vectors_3d_with_status[doc_vectors_3d_with_status['status'] == value]
+        traces_for_plot.append(df)
+
+    traces_status = []
+    for trace in traces_for_plot:
+        trace1 = go.Scatter3d(
+        x = trace['x'],
+        y = trace['y'],
+        z = trace['z'],
+        mode='markers',
+        name = status[trace['status'].values[0]],
+        marker=dict(
+            size=5,
+        )
+        )
+        traces_status.append(trace1)
+
+    layout = go.Layout(showlegend=True)
+    # # Make a figure object
+    fig = go.Figure(data= traces_status, layout = layout)
+    return dcc.Graph(id='3d-plot', figure= fig
+                    )
 
 def generate_eda_plot():
    return [{'x': df['status'], 'y': df['counts'], 'type': 'bar'}]
