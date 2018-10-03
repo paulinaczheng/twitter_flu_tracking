@@ -15,9 +15,9 @@ tfidf_df = tfidf_df.drop('Unnamed: 0', axis=1)
 doc2vec_df = pd.read_csv('doc2vec_metrics.csv')
 doc2vec_df.rename(columns={'Unnamed: 0': 'Training Method (n-gram)'}, inplace=True)
 
-dataframes = {'COUNT_DF': count_df,
-              'TFIDF_DF': tfidf_df,
-              'DOC2VEC_DF': doc2vec_df
+dataframes = {'Count Vectorization': count_df,
+              'TF-IDF Vectorization': tfidf_df,
+              'Doc2Vec': doc2vec_df
               }
 
 def get_data_object(user_selection):
@@ -30,6 +30,7 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
             html.Div([
                 html.H1('Project Process Overview'),
                 dcc.Markdown('The project was defined by two phases: (1) training machine learning classification models to identify flu-related tweets and (2) conducting time-series analyses with identified tweets and CDC data.'),
+                dcc.Markdown('***'),
                 html.Div([
                         html.Img(src='data:image/png;base64,{}'.format(encoded_process_image.decode()))
                         ])
@@ -46,28 +47,12 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                         ]),
         dcc.Tab(label='Natural Language Processing', children=[
             html.Div([
-                # dcc.Dropdown(
-                # id='select-vectorizer-metrics',
-                # options=[{'label': 'Count Vectorization', 'value': 'count'},
-                # {'label': 'TF-IDF Vectorization', "value": 'tfidf'},
-                # {'label': 'Doc2Vec', 'value': 'doc2vec'},
-                #         ],
-                # placeholder="Select Vectorizer", value ='Vectorizer'),
-                # dcc.RadioItems(
-                # id='select-vectorizer-metrics',
-                # options=[{'label': 'Count Vectorization', 'value': 'count'},
-                #         {'label': 'TF-IDF Vectorization', "value": 'tfidf'},
-                #         {'label': 'Doc2Vec', 'value': 'doc2vec'},
-                #             ],
-                #         value='count',
-                #         labelStyle={'display': 'inline-block'}),
-                # html.Div(id='vec-container'),
-                html.H4('DataTable'),
-                html.Label('Report type:', style={'font-weight': 'bold'}),
+                html.H1('Metrics Table'),
+                html.Label('Report Type:', style={'font-weight': 'bold'}),
                 dcc.Dropdown(
                     id='field-dropdown',
                     options=[{'label': df, 'value': df} for df in dataframes],
-                    value='DF_COUNT',
+                    value='Count Vectorization',
                     clearable=False
                             ),
                 dt.DataTable(
