@@ -159,7 +159,7 @@ def generate_pca_plot(input_value):
     if input_value=='line':
         return 'Line'
     elif input_value=='3d':
-        return '3D'
+        return doc2vec_3d_plot()
 
 def check_model(model_name):
     if model_name=='log':
