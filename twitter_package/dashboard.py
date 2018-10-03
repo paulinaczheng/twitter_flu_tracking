@@ -90,6 +90,8 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                         ]),
         dcc.Tab(label='Doc2Vec: PCA', children=[
             html.Div([
+                dcc.Markdown("*Explained variance ratio is 3.82%, 96.18% is lost by reducing the dimensionality*"),
+                dcc.Markdown('***'),
                 dcc.RadioItems(
                 id='select-pca-visualization',
                 options=[{'label': 'Line Plot', 'value': 'line'},
@@ -112,9 +114,7 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                         ],
                 placeholder="Select a Model", value ='Model'),
                 dcc.Markdown('***'),
-                html.Div(id='cm-container'),
-                # html.Div([dcc.Graph(id='roc',figure=generate_all_roc_curves())]),
-                html.Div(id='roc-container')
+                html.Div(id='cm-roc-container'),
                         ]),
         dcc.Tab(label='Time Series Analysis', children=[
             html.Div([
@@ -138,7 +138,7 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
             html.Div([
                 html.H1('Conclusions'),
                 dcc.Markdown('* Logistic regression was the best-performing classifier, with TF-IDF vectorization (with trigrams) used to process the annotated tweets'),
-                dcc.Markdown('* The SARIMA model that included both CDC & Twitter data did better at one-step ahead forecasting than the SARIMA model with just CDC data, using RMSE as a metric (3651.55 vs. 3448.62).'),
+                dcc.Markdown('* The SARIMA model that included both CDC & Twitter data did better at one-step ahead forecasting than the SARIMA model with just CDC data, using RMSE as a metric (3651.55 vs. 3448.62)'),
                 dcc.Markdown('* This implies that flu-related tweets contribute to the SARIMA model in some way that improves the predictive ability of the SARIMA model'),
                 html.H1('Limitations'),
                 dcc.Markdown('* ARIMA models very dependent on data trends and characteristics, requiring frequent refitting of model parameters'),
@@ -175,8 +175,8 @@ def check_model(model_name):
     elif model_name=='svm':
         return svm
 
-@app.callback(Output(component_id = 'cm-container', component_property ='children'),
-[Input(component_id = 'select-model',component_property = 'value')])
+# @app.callback(Output(component_id = 'cm-container', component_property ='children'),
+# [Input(component_id = 'select-model',component_property = 'value')])
 def generate_confusion_matrix(input_value):
     model = check_model(input_value)
     model.fit(x_train, y_train)
@@ -184,10 +184,10 @@ def generate_confusion_matrix(input_value):
     cm = confusion_matrix(y_test, predictions)
     cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
     trace = [go.Heatmap(x=['POS', 'NEG'], y=['POS', 'NEG'], z=cm)]
-    return dcc.Graph(id ='heatmap', figure = go.Figure(data = trace))
+    return dcc.Graph(id ='heatmap', figure = go.Figure(data = trace), style={'display': 'inline-block'})
 
-@app.callback(Output(component_id = 'roc-container', component_property ='children'),
-[Input(component_id = 'select-model',component_property = 'value')])
+# @app.callback(Output(component_id = 'roc-container', component_property ='children'),
+# [Input(component_id = 'select-model',component_property = 'value')])
 def generate_roc_curve(input_value):
     data = []
     lw=2
@@ -218,7 +218,14 @@ def generate_roc_curve(input_value):
                                   range=[-0.05, 1.05]))
     fig = go.Figure(data=data, layout=layout)
     return dcc.Graph(id='roc', figure={'data': fig,
-                    'layout': layout})
+                    'layout': layout}, style={'display': 'inline-block'})
+
+
+@app.callback(Output(component_id = 'cm-roc-container', component_property ='children'),
+[Input(component_id = 'select-model',component_property = 'value')])
+def generate_cm_roc_plot(input_value):
+    return generate_confusion_matrix(input_value), generate_roc_curve(input_value)
+
 # @app.callback(Output(component_id = 'vec-container', component_property ='children'),
 # [Input(component_id = 'select-vectorizer-metrics',component_property = 'value')])
 # def generate_vectorization_metrics(input_value):
