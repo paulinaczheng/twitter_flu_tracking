@@ -267,6 +267,18 @@ doc_vectors_3d_with_status =pd.concat([doc_vectors_3d,status_df], axis = 1)
 doc_vectors_3d_with_status.columns = ['x','y','z','status']
 doc_vectors_3d_with_status['status'] = doc_vectors_3d_with_status['status'].map(status_num)
 
+def status_name(status):
+    if status==0:
+        return 'Unrelated'
+    elif status==1:
+        return 'Related'
+
+def status_color(status):
+    if status==0:
+        return 'blue'
+    elif status==1:
+        return 'purple'
+
 def doc2vec_3d_plot():
     traces_for_plot = []
     for key, value in status_num.items():
@@ -280,9 +292,11 @@ def doc2vec_3d_plot():
         y = trace['y'],
         z = trace['z'],
         mode='markers',
-        name = status[trace['status'].values[0]],
+        name = status_name(status[trace['status'].values[0]]),
         marker=dict(
             size=5,
+            color=status_color(status[trace['status'].values[0]]),
+            opacity=0.5
         )
         )
         traces_status.append(trace1)
