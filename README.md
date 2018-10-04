@@ -3,6 +3,7 @@
 ## Project Motivation
 
 ## Process Overview
+![header](images/tab1.png)
 
 ## Data Sources 
 
@@ -18,6 +19,8 @@ In order to be used in machine learning algorithms, text must be converted into 
 
 ### Bag-of-Words (BoW)
 A BoW is a simplistic representation of a document; the occurrence of each word is measured and used as a feature. It is called a *bag* of words because the arrangement of the words, or any other details, are not considered. Documents are simply characterized by the presence of known words.
+
+n-gram features: The size of word pairings were also assessed: unigram (only single words are counted), bigram (1 to 2 words are counted), trigram (1 to 3 words are counted). That is, you can also work with pairs and triplets of words, rather than just single words. For example, 'new york' is more informative than 'new' and 'york', separately. 
 
 **Count Vectorization**
 
@@ -50,13 +53,38 @@ This is also evident with a 3D plot, where the data was arbitrarily reduced to 3
 
 ![header](images/tab5_2.png)
 
-There are no distinct clusters between related and unrelated tweets in 3 dimensions so reduction to, say, 3 dimensions would not be helpful. 
+There are no distinct clusters between related and unrelated tweets in 3 dimensions so reduction to, say, 3 dimensions would not be helpful. Indeed, 96.18% of explained variance is lost by reducing to 3 dimensions. 
+
+### NLP Model Selection
+After experimentation with the BoW model and word embedding, I chose to use trigram TF-IDF vectorization because it worked the best with my data. 
 
 ### Feature Importance
+I used the chi-square statistic to measure the relationship between a given feature (word in a tweet) and the tweet class (related or unrelated to flu infection). 
 
-### Summary
+![header](images/tab4.png)
+
+I plotted the top 10 features, with the highest chi-square values, to determine which features were the *most* predictive of a tweet's class. 
 
 ## Machine Learning: Tweet Identification
+The following machine learning classification algorithms were used:
+* Multinomial Naive Bayes 
+* Logistic Regression
+* Random Forest
+* Gradboost
+* Adaboost
+* Support Vector Machine
+
+Classifiers were assessed using the following metrics:
+
+* Validation accuracy
+* Confusion matrices
+* ROC curves
+
+### Validation Accuracy 
+
+### Confusion Matrices
+
+### ROC Curves
 
 ## Time-Series Analyses
 
