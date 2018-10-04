@@ -3,7 +3,7 @@
 ## Project Motivation
 
 ## Process Overview
-![header](images/tab1.png)
+![header](images/process_diagram.png)
 
 ## Data Sources 
 
@@ -74,17 +74,30 @@ The following machine learning classification algorithms were used:
 * Adaboost
 * Support Vector Machine
 
-Classifiers were assessed using the following metrics:
+For cross-validation,the annotated tweet dataset was split into training and validation sets.
+
+For each classifier, a grid-search was run to determine the best hyperparameters for the given classifier. Classifiers were then fit on the training data and assessed using the following metrics:
 
 * Validation accuracy
 * Confusion matrices
 * ROC curves
 
-### Validation Accuracy 
+### Cross-Validation: Validation Accuracy
+A given classification model was fit on the training data. It then classified the validation data. To assess the accuracy of the model, those predictions were compared to the actual labels. 
+
+![header](images/tab3.png)
 
 ### Confusion Matrices
+For a given classifier, a confusion matrix could be constructed. The confusion matrix is used to show the number of:
+
+* True positives: Related tweets that the classifier labeled as related
+* True negatives: Unrelated tweets that the classifier labeled as unrelated
+* False positives: Unrelated tweets that the classifier labeled as related
+* False negatives: Related tweets that the classifier labeled as unrelated
 
 ### ROC Curves
+
+### Machine Learning Model Selection 
 
 ## Time-Series Analyses
 
