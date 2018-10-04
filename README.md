@@ -96,9 +96,25 @@ For a given classifier, a confusion matrix could be constructed. The confusion m
 * False negatives: Related tweets that the classifier labeled as unrelated
 
 ### ROC Curves
+The Receiver Operator Characteristic (ROC) curve is used to assess the classification ability of a classification model, by plotting the true positive rate against the false positive rate. The faster the curve 'peaks', the better the true positive rate without necessarily having very many false positives. The area under the curve (AUC) is a measure derived from the ROC curve. The baseline is 'chance'; a 50% accuracy indicates a useless classifier (because it's no better than randomly guessing). The higher the AUC, the 'better' the classification model. 
+
+![header](images/tab6.png)
 
 ### Machine Learning Model Selection 
+Logistic regression with L2 regularization was selected as the best classifier for this dataset, with about 74.7% validation accuracy and AUC of 0.81. 
 
 ## Time-Series Analyses
+
+![header](images/sarima_process.png)
+
+### Visualizations
+
+### Stationarization of Data
+
+### Autocorrelation and Partial Autocorrelation Functions
+
+### Seasonal ARIMA Model
+
+### Model Selection 
 
 ## Conclusions 
