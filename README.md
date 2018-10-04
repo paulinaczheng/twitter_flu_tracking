@@ -15,8 +15,20 @@ Historical tweet IDs were 'hydrated' by feeding in those IDs into the Twitter AP
 
 Relevant live tweets were also stored in the PostGres database as they occurred. 
 
+Tweet texts were cleaned as well:
+
+* URL links were removed 
+* Contractions were changed (haven't --> have)
+* Numbers and special characters were removed
+* All words changed to lower-case
+
+**Annotated Tweets**
+Annotated tweets were taken from http://cmci.colorado.edu/~mpaul/downloads/flu_data.php 
+
+Tweet IDs were hydrated and some tweets removed. 
+
 ### CDC
-CDC data on influenza-related visits were taken from the CDC website. For the purposes of this project, CDC data was 
+CDC data on influenza-related visits were taken from the CDC website. For the purposes of this project, CDC data was considered 'ground truth'. 
 
 ## Visualizations
 All visualizations were presented on a Flask app, using Dash as an interactive interface. 
@@ -171,4 +183,7 @@ A model with just CDC data was constructed and validated using one-step ahead fo
 The two models were compared, using the RMSE values from one-step ahead forecasting. The RMSE for the model with both CDC and Twitter data was found to be lower than that for the CDC-only model (~3400 vs. 3600). This indicates that Twitter data does contribute to the model in some way such that the model with both CDC and Twitter data does better at predicting future values than the model with just CDC data. 
 
 ## Conclusions 
-
+* Logistic regression was the best-performing classifier, with TF-IDF vectorization (with trigrams) used to process the annotated tweets
+* The SARIMA model that included both CDC & Twitter data did better at one-step ahead forecasting than the SARIMA model with just CDC data, using RMSE as a metric (3651.55 vs. 3448.62)
+* This implies that flu-related tweets contribute to the SARIMA model in some way that improves the predictive ability of the SARIMA model
+* Next steps include forecasting national flu cases for future flu seasons 
