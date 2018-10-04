@@ -45,7 +45,6 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                                         )},
                                 style={'margin-left': '100px'}
                                 ),
-                    # style={'display': 'inline-block'}
                         ],
                         style={'display': 'flex', 'align-items': 'center'})
                         ]),
@@ -68,7 +67,6 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                     selected_row_indices=[],
                     id='table'
                             ),
-                # html.Div(id='selected-indexes')
                         ])
                         ]),
         dcc.Tab(label='Feature Importance', children=[
@@ -77,7 +75,6 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                     'layout': go.Layout(xaxis={'title': 'Chi-Square Value'},
                                         showlegend=False,
                                                 )},
-                            # style={'display': 'inline-block'}
                                                 )
                         ])
                         ]),
@@ -168,15 +165,13 @@ def check_model(model_name):
     elif model_name=='svm':
         return svm
 
-# @app.callback(Output(component_id = 'cm-container', component_property ='children'),
-# [Input(component_id = 'select-model',component_property = 'value')])
 def generate_confusion_matrix(input_value):
     model = check_model(input_value)
     model.fit(x_train, y_train)
     predictions = model.predict(x_test)
     cm = confusion_matrix(y_test, predictions)
     cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-    trace = [go.Heatmap(x=['RELATED', 'UNRELATED'], y=['RELATED', 'UNRELATED'], z=cm,
+    trace = [go.Heatmap(x=['UNRELATED', 'RELATED'], y=['UNRELATED', 'RELATED'], z=cm,
                         colorscale='Viridis')]
     layout = go.Layout(title='Confusion Matrix',
                            xaxis=dict(title='Actual Class',
@@ -185,8 +180,6 @@ def generate_confusion_matrix(input_value):
                                       range=[0, 0.5, 1]))
     return dcc.Graph(id ='heatmap', figure = go.Figure(data = trace, layout= layout), style={'display': 'inline-block'})
 
-# @app.callback(Output(component_id = 'roc-container', component_property ='children'),
-# [Input(component_id = 'select-model',component_property = 'value')])
 def generate_roc_curve(input_value):
     data = []
     lw=2
@@ -224,16 +217,6 @@ def generate_roc_curve(input_value):
 [Input(component_id = 'select-model',component_property = 'value')])
 def generate_cm_roc_plot(input_value):
     return generate_confusion_matrix(input_value), generate_roc_curve(input_value)
-
-# @app.callback(Output(component_id = 'vec-container', component_property ='children'),
-# [Input(component_id = 'select-vectorizer-metrics',component_property = 'value')])
-# def generate_vectorization_metrics(input_value):
-#     if input_value=='count':
-#         return 'Count'
-#     elif input_value=='tfidf':
-#         return 'TF-IDF'
-#     elif input_value=='doc2vec':
-#         return 'Doc2Vec'
 
 @app.callback(Output(component_id = 'ts-container', component_property ='children'),
 [Input(component_id = 'select-arima-metrics',component_property = 'value')])
