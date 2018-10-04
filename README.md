@@ -10,19 +10,34 @@
 
 ### CDC
 
-## Natural Language Processing: Feature Extraction
+## Visualizations
+All visualizations were presented on a Flask app, using Dash as an interactive interface. 
 
-### Bag-of-Words
+## Natural Language Processing: Feature Extraction
+In order to be used in machine learning algorithms, text must be converted into vectors of numbers. Such vectors are intended to represent characteristics of the texts. Two models were used: the Bag-of-Words model and vector embedding. 
+
+### Bag-of-Words (BoW)
+A BoW is a simplistic representation of a document; the occurrence of each word is measured and used as a feature. It is called a *bag* of words because the arrangement of the words, or any other details, are not considered. Documents are simply characterized by the presence of known words.
 
 **Count Vectorization**
+The (count) frequency of each known word in a given document is measured. 
 
 **TF-IDF Vectorization**
+The frequency of each known word is offset by its overall frequency in the corpus (the collection of documents). 
 
-### Vector Embedding
+### Word Embedding: Doc2Vec
+In contrast with the BoW model, word embedding also considers the *context* of words. Doc2Vec is an unsupervised algorithm that generates vector representations of documents, regardless of length, in order to assess the similarity between documents. Each document is mapped to a unique vector and each word is mapped to a unique vector. 
 
-**Doc2Vec**
+It should be noted that there are a few caveats to using Doc2Vec for this particular dataset: 
 
-*Principal Component Analysis* 
+(1) Because the corpus is composed of tweets, with many misspellings, Doc2Vec is not necessarily ideal because it's much more difficult to assess the similarity between tweets as there are so many variations in spelling and phrases. 
+
+(2) The training set was fairly limited in size and not diverse enough for a Doc2Vec model to learn true contextual relations and generate reasonably embeddings accordingly. 
+
+However, I wanted to compare word embedding to the BoW model in order to see how it handled my data. 
+
+**Principal Component Analysis**
+In conjunction with Doc2Vec, I also conducted principal component analysis for potential dimensionality reduction. If there are certain features that are more 'important' for characterizing flu/non-flu related tweets and others that are considerably less important, then it makes more sense to only use the more important features. The less important features don't contribute much and only add to the time and computational resources needed for subsequent classification. 
 
 ### Feature Importance
 
