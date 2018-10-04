@@ -109,9 +109,43 @@ Logistic regression with L2 regularization was selected as the best classifier f
 
 ### Visualizations
 
+![header](images/tab7_1.png)
+
+When plotting CDC visits and flu-related tweets, it is clear that there is a seasonal nature to the data. CDC and Twitter data are roughly in sync, although there are some differences between CDC and Twitter data. This is assumed to be due to noise in the Twitter data as the classification model was not perfect in identifying relevant tweets and there are likely to be 'false positives' in the Twitter data. However, the data seems to be as expected. 
+
+Peaks in the data correspond with the known flu season (~November to April). It should be noted that the peak is much larger for the 2017-2018 season than for the 2016-2017 season because the season was particularly bad for that year. 
+
 ### Stationarization of Data
 
+Before any time-series modeling can be conducted, the data must first be assessed for stationarity. Time-series modeling is regression modeling which is contingent on 4 core assumptions:
+
+(1) Independence of observations: observations are not related to each other
+(2) Linear relationship of data
+(3) No/little multicollinearity
+(4) Homoscedasticity: variance around the regression line is the same for all observations
+(5) Normality of data
+
+Because this is time-series data, it is clear that the first assumption is violated. Observations are time-dependent; an observation at a past timepoint will influence a future observation. This is evident when plotting the rolling mean and standard deviations of the data:
+
+![header](images/tab7_2.png)
+
+The mean and variation change over time and do not stay the same as would be expected for independent observations. This is confirmed by the Dickey-Fuller hypothesis test (H0: the data is not stationary). The p-value was found to be greater than 0.05. At 5% significance, we fail to reject the null hypothesis that the data is not stationary. 
+
+There are different ways to stationarize the data; I tried different methods including: taking the log of the data, differencing the log, etc. I found that the most effective way of stationarizing the data was to take the seasonal first difference of the data (take the difference between timepoints a 'season' apart); this was confirmed with a Dickey-Fuller test. 
+
 ### Autocorrelation and Partial Autocorrelation Functions
+
+The autocorrelation function (ACF) and partial autocorrelation function (PACF) were plotted. 
+
+The ACF tells you how points are correlated with each other, based on how many time steps they are separated by.
+
+The Pearson's correlation coefficient was also used to calculate how strongly points are related to each other. The Pearson's correlation coefficient was ~0.97 for time points separated by 1 time step, suggesting a very strong correlation. 
+
+The PACF tells you how points are correlated with each other, but with the effects of the intervening time steps *removed*. 
+
+![header](images/tab7_3.png)
+
+PACF is used for AR model diagnostics and ACF is used for MA model diagnostics.
 
 ### Seasonal ARIMA Model
 
