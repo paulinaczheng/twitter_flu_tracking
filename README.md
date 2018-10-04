@@ -1,6 +1,7 @@
 # Tracking Flu Outbreaks with Twitter
 
 ## Project Motivation
+Currently, official data sources to identify and predict future disease counts are limited. CDC data for influenza-related visits, for example, is released on a 2-week delay which gives less information than might be ideal. If we are able to identify and incorporate real-time data such as tweets, we might be able to better predict immediate and future outbreaks. This would allow us to respond more quickly to outbreaks which would improve outcomes and thus, population health.   
 
 ## Process Overview
 ![header](images/process_diagram.png)
@@ -119,11 +120,11 @@ Peaks in the data correspond with the known flu season (~November to April). It 
 
 Before any time-series modeling can be conducted, the data must first be assessed for stationarity. Time-series modeling is regression modeling which is contingent on 4 core assumptions:
 
-(1) Independence of observations: observations are not related to each other
-(2) Linear relationship of data
-(3) No/little multicollinearity
-(4) Homoscedasticity: variance around the regression line is the same for all observations
-(5) Normality of data
+1. Independence of observations: observations are not related to each other
+2. Linear relationship of data
+3. No/little multicollinearity
+4. Homoscedasticity: variance around the regression line is the same for all observations
+5. Normality of data
 
 Because this is time-series data, it is clear that the first assumption is violated. Observations are time-dependent; an observation at a past timepoint will influence a future observation. This is evident when plotting the rolling mean and standard deviations of the data:
 
@@ -150,9 +151,9 @@ PACF is used for AR model diagnostics and ACF is used for MA model diagnostics.
 ### Seasonal ARIMA Model
 The Auto Regressive Integrated Moving Average (ARIMA) model has the following hyperparameters to account for seasonality, trend, and noise in the data:
 
-(1) # of auto regressive terms (p): the effects of past values 
-(2) # of differences (d): the amount of differencing (see above)
-(3) # of moving average terms (q): the error of the model as a linear combination of the error values observed at previous time points in the past
+1. # of auto regressive terms (p): the effects of past values 
+2. # of differences (d): the amount of differencing (see above)
+3. # of moving average terms (q): the error of the model as a linear combination of the error values observed at previous time points in the past
 
 (P, D, Q) follow the same definition but are applied to the seasonal component of the time series.
 
@@ -164,3 +165,4 @@ A model with just CDC data was constructed and validated using one-step ahead fo
 The two models were compared, using the RMSE values from one-step ahead forecasting. The RMSE for the model with both CDC and Twitter data was found to be lower than that for the CDC-only model (~3400 vs. 3600). This indicates that Twitter data does contribute to the model in some way such that the model with both CDC and Twitter data does better at predicting future values than the model with just CDC data. 
 
 ## Conclusions 
+
