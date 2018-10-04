@@ -7,10 +7,16 @@ Currently, official data sources to identify and predict future disease counts a
 ![header](images/process_diagram.png)
 
 ## Data Sources 
+### Database
+A PostgreSQL database was built, using SQLAlchemy to construct the schema. 
 
 ### Twitter
+Historical tweet IDs were 'hydrated' by feeding in those IDs into the Twitter API and retrieving associated information. These tweets were then filtered (using keywords such as 'flu' and 'influenza') and only relevant tweets were stored in a PostGres database. Tweets from October 2016 to August 2018 were hydrated. More than 5 million historical tweets containing any of the specified keywords were identified. 
+
+Relevant live tweets were also stored in the PostGres database as they occurred. 
 
 ### CDC
+CDC data on influenza-related visits were taken from the CDC website. For the purposes of this project, CDC data was 
 
 ## Visualizations
 All visualizations were presented on a Flask app, using Dash as an interactive interface. 
@@ -151,9 +157,9 @@ PACF is used for AR model diagnostics and ACF is used for MA model diagnostics.
 ### Seasonal ARIMA Model
 The Auto Regressive Integrated Moving Average (ARIMA) model has the following hyperparameters to account for seasonality, trend, and noise in the data:
 
-1. # of auto regressive terms (p): the effects of past values 
-2. # of differences (d): the amount of differencing (see above)
-3. # of moving average terms (q): the error of the model as a linear combination of the error values observed at previous time points in the past
+1. Number of auto regressive terms (p): the effects of past values 
+2. Number of differences (d): the amount of differencing (see above)
+3. Number of moving average terms (q): the error of the model as a linear combination of the error values observed at previous time points in the past
 
 (P, D, Q) follow the same definition but are applied to the seasonal component of the time series.
 
