@@ -20,9 +20,11 @@ In order to be used in machine learning algorithms, text must be converted into 
 A BoW is a simplistic representation of a document; the occurrence of each word is measured and used as a feature. It is called a *bag* of words because the arrangement of the words, or any other details, are not considered. Documents are simply characterized by the presence of known words.
 
 **Count Vectorization**
+
 The (count) frequency of each known word in a given document is measured. 
 
 **TF-IDF Vectorization**
+
 The frequency of each known word is offset by its overall frequency in the corpus (the collection of documents). 
 
 ### Word Embedding: Doc2Vec
@@ -37,7 +39,18 @@ It should be noted that there are a few caveats to using Doc2Vec for this partic
 However, I wanted to compare word embedding to the BoW model in order to see how it handled my data. 
 
 **Principal Component Analysis**
+
 In conjunction with Doc2Vec, I also conducted principal component analysis for potential dimensionality reduction. If there are certain features that are more 'important' for characterizing flu/non-flu related tweets and others that are considerably less important, then it makes more sense to only use the more important features. The less important features don't contribute much and only add to the time and computational resources needed for subsequent classification. 
+
+![header](images/tab5_1.png)
+
+The fairly linear trend of the cumulative explained variance (in purple) indicates that each of the principal components roughly equally contributes to the explained variance -- dimensionality reduction would not be helpful. The explained variance (in maroon) remains flat as well. 
+
+This is also evident with a 3D plot, where the data was arbitrarily reduced to 3 dimensions. 
+
+![header](images/tab5_2.png)
+
+There are no distinct clusters between related and unrelated tweets in 3 dimensions so reduction to, say, 3 dimensions would not be helpful. 
 
 ### Feature Importance
 
