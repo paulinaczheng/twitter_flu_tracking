@@ -148,7 +148,19 @@ The PACF tells you how points are correlated with each other, but with the effec
 PACF is used for AR model diagnostics and ACF is used for MA model diagnostics.
 
 ### Seasonal ARIMA Model
+The Auto Regressive Integrated Moving Average (ARIMA) model has the following hyperparameters to account for seasonality, trend, and noise in the data:
+
+(1) # of auto regressive terms (p): the effects of past values 
+(2) # of differences (d): the amount of differencing (see above)
+(3) # of moving average terms (q): the error of the model as a linear combination of the error values observed at previous time points in the past
+
+(P, D, Q) follow the same definition but are applied to the seasonal component of the time series.
+
+The optimal values for these hyperparameters were selected based on prior steps and a gridsearch. The model was then built.
 
 ### Model Selection 
+A model with just CDC data was constructed and validated using one-step ahead forecasting (comparing model predictions to known values). A separate model, with CDC model and Twitter data as an exogenous variable, was also constructed and validated using one-step ahead forecasting. 
+
+The two models were compared, using the RMSE values from one-step ahead forecasting. The RMSE for the model with both CDC and Twitter data was found to be lower than that for the CDC-only model (~3400 vs. 3600). This indicates that Twitter data does contribute to the model in some way such that the model with both CDC and Twitter data does better at predicting future values than the model with just CDC data. 
 
 ## Conclusions 
