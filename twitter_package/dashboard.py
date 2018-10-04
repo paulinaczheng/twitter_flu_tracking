@@ -37,14 +37,17 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
                         ]),
         dcc.Tab(label='Exploratory Data Analysis', children=[
             html.Div([
+                    html.Img(src='data:image/png;base64,{}'.format(encoded_sample_image.decode())),
                     dcc.Graph(id='EDA', figure={'data': generate_eda_plot(),
                     'layout': go.Layout(xaxis={'title': 'Flu-Related'},
                                         yaxis={'title': 'Count'},
                                         title='Status Distribution of Annotated Tweets',
                                         )},
-                                # style={'display': 'inline-block'}
-                                )
-                        ])
+                                style={'margin-left': '100px'}
+                                ),
+                    # style={'display': 'inline-block'}
+                        ],
+                        style={'display': 'flex', 'align-items': 'center'})
                         ]),
         dcc.Tab(label='Natural Language Processing', children=[
             html.Div([
@@ -126,6 +129,7 @@ app.layout = html.Div(style={'fontFamily': 'Sans-Serif'}, children=[
         dcc.Tab(label='Conclusions', children=[
             html.Div([
                 html.H1('Conclusions'),
+                dcc.Markdown('* Use model to predict outbreaks'),
                 dcc.Markdown('* Logistic regression was the best-performing classifier, with TF-IDF vectorization (with trigrams) used to process the annotated tweets'),
                 dcc.Markdown('* The SARIMA model that included both CDC & Twitter data did better at one-step ahead forecasting than the SARIMA model with just CDC data, using RMSE as a metric (3651.55 vs. 3448.62)'),
                 dcc.Markdown('* This implies that flu-related tweets contribute to the SARIMA model in some way that improves the predictive ability of the SARIMA model'),
