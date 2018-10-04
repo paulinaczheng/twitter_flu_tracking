@@ -26,6 +26,8 @@ cores = multiprocessing.cpu_count()
 
 process_diagram = 'images/process_diagram.png'
 encoded_process_image = base64.b64encode(open(process_diagram, 'rb').read())
+sample_diagram = 'images/sample_labels.png'
+encoded_sample_image = base64.b64encode(open(sample_diagram, 'rb').read())
 sarima_diagram = 'images/sarima_process.png'
 encoded_sarima_image = base64.b64encode(open(sarima_diagram, 'rb').read())
 acf_pacf_diagram = 'images/acf_pacf.png'
